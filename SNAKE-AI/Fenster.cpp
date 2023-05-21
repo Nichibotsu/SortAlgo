@@ -15,7 +15,7 @@ void ui(sf::RenderWindow* w);
 std::vector<Button>Knopf_collection = { start,random};
 
 
-
+//TEST
 Fenster::Fenster():
 window(VideoMode(1250, 480), "Sorting-Algo", Style::Titlebar | Style::Close)
 {
