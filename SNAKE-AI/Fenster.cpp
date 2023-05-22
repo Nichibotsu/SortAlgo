@@ -4,18 +4,22 @@
 //global
 sf::Mouse maus;
 std::random_device rd;
-std::uniform_int_distribution<int> dist(0, 450);
+std::uniform_int_distribution<int> dist(0, 475);
 vector<RectangleShape>rect;//array mit Rechtecken
 Event ev;//Zuständig für Aktionen
 sf::Font font;
+sf::Text text;
 Button start(850, 25, 100, 50, Color::White, Color::Black, 2, "Start", 15, Color::Black);
 Button random(975, 25, 100, 50, Color::White, Color::Black, 2, "Random", 15, Color::Black);
+std::vector<Button>Knopf_collection = { start,random};
+std::vector<string> Sortalgo = {"Bubblesort","Quicksort","a","b","c"};
+
+//Verlinkungen
 void BLOCKS();
 void ui(sf::RenderWindow* w);
-std::vector<Button>Knopf_collection = { start,random};
+void bubblesort(sf::RenderWindow* w);
 
 
-//TEST
 Fenster::Fenster():
 window(VideoMode(1250, 480), "Sorting-Algo", Style::Titlebar | Style::Close)
 {
@@ -26,19 +30,22 @@ window(VideoMode(1250, 480), "Sorting-Algo", Style::Titlebar | Style::Close)
 void Fenster :: begin() {
 	//Setup
 	font.loadFromFile("font.TTF");
+	text.setFillColor(Color::Black);
+	text.setPosition(820,300);
+	text.setFont(font);
+	text.setCharacterSize(20);
+	text.setString("Sortierungsalgorithmus:");
 	this->window.setFramerateLimit(30);
 	BLOCKS();
 	for (int i = 0; i < Knopf_collection.size(); i++)
 	{
 		Knopf_collection[i].setup();
 	}
-
-
-
-
+	int sortierungswechsel = 0;
 
 	while (this->window.isOpen()) {
 
+		
 		//Event polling
 		while (this->window.pollEvent(ev))
 		{
@@ -53,7 +60,32 @@ void Fenster :: begin() {
 					this->window.close();
 
 				}
+				if (ev.key.code == Keyboard::Left) {
+					if (sortierungswechsel!=0) {
+						text.setString(Sortalgo[sortierungswechsel-1]);
+						sortierungswechsel--;
+					}
+					else if (sortierungswechsel == 0) {
+						text.setString(Sortalgo[Sortalgo.size() - 1]);
+						sortierungswechsel = Sortalgo.size() - 1;
+						
+					}
+					
+				}
+				if (ev.key.code == Keyboard::Right) {
+
+					if (sortierungswechsel != Sortalgo.size() - 1) {
+						text.setString(Sortalgo[sortierungswechsel + 1]);
+						sortierungswechsel++;
+					}
+					else if (sortierungswechsel == Sortalgo.size() - 1) {
+						text.setString(Sortalgo[0]);
+						sortierungswechsel = 0;
+
+					}
+				}
 				break;
+
 
 			}
 
@@ -65,24 +97,17 @@ void Fenster :: begin() {
 		}
 
 		if (Knopf_collection[0].start_number!=0) {
-			float connector = 0;//Dient als Zwischenspeicher
-			for (int lauf = 0; lauf < rect.size() - 1; lauf++)
-			{
-				if (rect[lauf].getSize().y < rect[lauf + 1].getSize().y) {
-
-					connector = rect[lauf].getPosition().x;
-					rect[lauf].setPosition(rect[lauf + 1].getPosition().x, 480);
-					rect[lauf + 1].setPosition(connector, 480);
-					swap(rect[lauf], rect[lauf + 1]);//Vertausche die Positionen der beiden Elementen im vector
-				}
-			}
+			
 			
 		}
 		if (Knopf_collection[1].start_number != 0) {
 			BLOCKS();
 			Knopf_collection[1].start_number = 0;
 		}
+
+		
 		ui(&this->window);
+		this->window.draw(text);
 		this->window.display();
 	}
 
@@ -123,4 +148,25 @@ void BLOCKS() {
 
 
 	}
+}
+
+
+//
+//Algo
+//
+
+void bubblesort(sf::RenderWindow* w) {
+
+	float connector = 0;//Dient als Zwischenspeicher
+	for (int lauf = 0; lauf < rect.size() - 1; lauf++)
+	{
+		if (abs(rect[lauf].getSize().y) < abs(rect[lauf + 1].getSize().y)) {
+
+			connector = rect[lauf].getPosition().x;
+			rect[lauf].setPosition(rect[lauf + 1].getPosition().x, 480);
+			rect[lauf + 1].setPosition(connector, 480);
+			swap(rect[lauf], rect[lauf + 1]);//Vertausche die Positionen der beiden Elementen im vector
+		}
+	}
+
 }
