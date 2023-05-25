@@ -12,7 +12,7 @@ sf::Text text;
 Button start(850, 25, 100, 50, Color::White, Color::Black, 2, "Start", 15, Color::Black);
 Button random(975, 25, 100, 50, Color::White, Color::Black, 2, "Random", 15, Color::Black);
 std::vector<Button>Knopf_collection = { start,random};
-std::vector<string> Sortalgo = {"Bubblesort","Quicksort","a","b","c"};
+std::vector<string> Sortalgo = {"Bubblesort","Quicksort","Mergesort","Insertion Sort","c"};
 bool finish=true;
 bool start_timer = true;
 int startzeit;
@@ -20,8 +20,13 @@ int startzeit;
 //Verlinkungen
 void BLOCKS();
 void ui(sf::RenderWindow* w);
-void bubblesort(sf::RenderWindow* w);
 void finish_();
+void drawer(sf::RenderWindow* w);
+// Algoverlinkung
+void bubblesort(sf::RenderWindow* w);
+void quicksort(sf::RenderWindow* w);
+void mergesort(sf::RenderWindow* w);
+void insertion_Sort(sf::RenderWindow* w);
 
 
 Fenster::Fenster():
@@ -38,7 +43,7 @@ void Fenster :: begin() {
 	text.setPosition(820,300);
 	text.setFont(font);
 	text.setCharacterSize(20);
-	text.setString("Sortierungsalgorithmus:");
+	text.setString("Sortierungsalgorithmus:"+Sortalgo[0]);
 	this->window.setFramerateLimit(30);
 	
 	BLOCKS();
@@ -67,11 +72,11 @@ void Fenster :: begin() {
 				}
 				if (ev.key.code == Keyboard::Left) {
 					if (sortierungswechsel!=0) {
-						text.setString(Sortalgo[sortierungswechsel-1]);
+						text.setString("Sortierungsalgorithmus:"+Sortalgo[sortierungswechsel-1]);
 						sortierungswechsel--;
 					}
 					else if (sortierungswechsel == 0) {
-						text.setString(Sortalgo[Sortalgo.size() - 1]);
+						text.setString("Sortierungsalgorithmus:"+Sortalgo[Sortalgo.size() - 1]);
 						sortierungswechsel = Sortalgo.size() - 1;
 						
 					}
@@ -80,11 +85,11 @@ void Fenster :: begin() {
 				if (ev.key.code == Keyboard::Right) {
 
 					if (sortierungswechsel != Sortalgo.size() - 1) {
-						text.setString(Sortalgo[sortierungswechsel + 1]);
+						text.setString("Sortierungsalgorithmus:"+Sortalgo[sortierungswechsel + 1]);
 						sortierungswechsel++;
 					}
 					else if (sortierungswechsel == Sortalgo.size() - 1) {
-						text.setString(Sortalgo[0]);
+						text.setString("Sortierungsalgorithmus:"+Sortalgo[0]);
 						sortierungswechsel = 0;
 
 					}
@@ -102,9 +107,9 @@ void Fenster :: begin() {
 			this->window.draw(rect[i]);//Rechtecke zeichnen
 		}
 		
-
+		finish = true;
 		if (Knopf_collection[0].start_number!=0&&finish) {//Auswahl
-			finish = true;
+			
 			
 			switch (sortierungswechsel)
 			{
@@ -112,13 +117,23 @@ void Fenster :: begin() {
 				clock.restart();
 				bubblesort(&this->window);
 				break;
+			
 			case 1:
 				clock.restart();
+				quicksort(&this->window);
 				break;
+			case 2:
+				clock.restart();
+				mergesort(&this->window);
+				break;
+			case 3:
+				clock.restart();
+				insertion_Sort(&this->window);
 			default:
 				break;
 			}
 			Knopf_collection[0].start_number = 0;
+			
 			sf::Time elapsed = clock.getElapsedTime();
 			std::cout << elapsed.asSeconds() << std::endl;
 		}
@@ -151,8 +166,6 @@ void ui(sf::RenderWindow *w) {
 	{
 		Knopf_collection[i].draw(w);
 	}
-	
-	
 	
 }
 
@@ -189,6 +202,14 @@ void finish_() {
 		finish = false;
 	}
 }
+void drawer(sf::RenderWindow *w) {
+
+	for (int i = 0; i < rect.size(); i++) {
+		w->draw(rect[i]);//Rechtecke zeichnen
+	}
+	ui(w);
+
+}
 
 //
 //Algo
@@ -199,10 +220,8 @@ void bubblesort(sf::RenderWindow* w) {
 	while (finish)
 	{
 		w->clear();
-		for (int i = 0; i < rect.size(); i++) {
-			w->draw(rect[i]);//Rechtecke zeichnen
-		}
-		ui(w);
+		
+		drawer(w);
 
 		float connector = 0;//Dient als Zwischenspeicher
 		for (int lauf = 0; lauf < rect.size() - 1; lauf++)
@@ -218,5 +237,80 @@ void bubblesort(sf::RenderWindow* w) {
 		finish_();
 		w->display();
 	}
+
+}
+
+void quicksort(sf::RenderWindow* w) {
+
+	while (finish)
+	{
+		w->clear();
+		
+		drawer(w);
+
+		//logic
+
+
+
+
+
+		//Timer finish
+		finish_();
+		w->display();
+
+	}
+
+
+}
+
+void mergesort(sf::RenderWindow* w) {
+
+	while (finish)
+	{
+		w->clear();
+		drawer(w);
+
+		//logic
+		
+
+
+
+
+		//Timer finish
+		finish_();
+		w->display();
+
+	}
+
+
+}
+void insertion_Sort(sf::RenderWindow* w) {
+
+	while (finish)
+	{
+		w->clear();
+		drawer(w);
+
+
+		//Array speichern
+		//logic
+		float connector = 0;//Dient als Zwischenspeicher
+		for (int lauf = 0; lauf < rect.size() - 1; lauf++)
+		{
+			if (abs(rect[lauf].getSize().y) < abs(rect[lauf + 1].getSize().y)) {
+
+				connector = rect[lauf].getPosition().x;
+				rect[lauf].setPosition(rect[lauf + 1].getPosition().x, 480);
+				rect[lauf + 1].setPosition(connector, 480);
+				swap(rect[lauf], rect[lauf + 1]);//Vertausche die Positionen der beiden Elementen im vector
+			}
+		}
+
+		//Timer finish
+		finish_();
+		w->display();
+
+	}
+
 
 }
