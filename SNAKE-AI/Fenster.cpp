@@ -13,11 +13,15 @@ Button start(850, 25, 100, 50, Color::White, Color::Black, 2, "Start", 15, Color
 Button random(975, 25, 100, 50, Color::White, Color::Black, 2, "Random", 15, Color::Black);
 std::vector<Button>Knopf_collection = { start,random};
 std::vector<string> Sortalgo = {"Bubblesort","Quicksort","a","b","c"};
+bool finish=true;
+bool start_timer = true;
+int startzeit;
 
 //Verlinkungen
 void BLOCKS();
 void ui(sf::RenderWindow* w);
 void bubblesort(sf::RenderWindow* w);
+void finish_();
 
 
 Fenster::Fenster():
@@ -36,13 +40,14 @@ void Fenster :: begin() {
 	text.setCharacterSize(20);
 	text.setString("Sortierungsalgorithmus:");
 	this->window.setFramerateLimit(30);
+	
 	BLOCKS();
 	for (int i = 0; i < Knopf_collection.size(); i++)
 	{
 		Knopf_collection[i].setup();
 	}
 	int sortierungswechsel = 0;
-
+	sf::Clock clock;
 	while (this->window.isOpen()) {
 
 		
@@ -90,17 +95,34 @@ void Fenster :: begin() {
 			}
 
 		}
+		
 		this->window.clear();//Clear old frame
 		
 		for (int i = 0; i < rect.size(); i++) {
 			this->window.draw(rect[i]);//Rechtecke zeichnen
 		}
+		
 
-		if (Knopf_collection[0].start_number!=0) {
+		if (Knopf_collection[0].start_number!=0&&finish) {//Auswahl
+			finish = true;
 			
-			
+			switch (sortierungswechsel)
+			{
+			case 0:
+				clock.restart();
+				bubblesort(&this->window);
+				break;
+			case 1:
+				clock.restart();
+				break;
+			default:
+				break;
+			}
+			Knopf_collection[0].start_number = 0;
+			sf::Time elapsed = clock.getElapsedTime();
+			std::cout << elapsed.asSeconds() << std::endl;
 		}
-		if (Knopf_collection[1].start_number != 0) {
+		if (Knopf_collection[1].start_number != 0) {//Random
 			BLOCKS();
 			Knopf_collection[1].start_number = 0;
 		}
@@ -150,6 +172,23 @@ void BLOCKS() {
 	}
 }
 
+//
+//finish
+//
+void finish_() {
+
+	int n = 0;
+	for (int i = 0; i < rect.size()-1; i++)
+	{
+		if (abs(rect[i].getSize().y) >= abs(rect[i + 1].getSize().y)) {
+
+			n++;
+		}
+	}
+	if (n == rect.size() - 1) {
+		finish = false;
+	}
+}
 
 //
 //Algo
@@ -157,16 +196,27 @@ void BLOCKS() {
 
 void bubblesort(sf::RenderWindow* w) {
 
-	float connector = 0;//Dient als Zwischenspeicher
-	for (int lauf = 0; lauf < rect.size() - 1; lauf++)
+	while (finish)
 	{
-		if (abs(rect[lauf].getSize().y) < abs(rect[lauf + 1].getSize().y)) {
-
-			connector = rect[lauf].getPosition().x;
-			rect[lauf].setPosition(rect[lauf + 1].getPosition().x, 480);
-			rect[lauf + 1].setPosition(connector, 480);
-			swap(rect[lauf], rect[lauf + 1]);//Vertausche die Positionen der beiden Elementen im vector
+		w->clear();
+		for (int i = 0; i < rect.size(); i++) {
+			w->draw(rect[i]);//Rechtecke zeichnen
 		}
+		ui(w);
+
+		float connector = 0;//Dient als Zwischenspeicher
+		for (int lauf = 0; lauf < rect.size() - 1; lauf++)
+		{
+			if (abs(rect[lauf].getSize().y) < abs(rect[lauf + 1].getSize().y)) {
+
+				connector = rect[lauf].getPosition().x;
+				rect[lauf].setPosition(rect[lauf + 1].getPosition().x, 480);
+				rect[lauf + 1].setPosition(connector, 480);
+				swap(rect[lauf], rect[lauf + 1]);//Vertausche die Positionen der beiden Elementen im vector
+			}
+		}
+		finish_();
+		w->display();
 	}
 
 }

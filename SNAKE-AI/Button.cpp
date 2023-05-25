@@ -104,6 +104,7 @@ Button::Button(int x_posi, int y_posi, int x_size, int y_size, Color inhalt, Col
             if (this->start_number == 1) {
                 this->start_number = 0;
                 this->innenseite = Color::White;
+                
             }
             else {
                 this->start_number = 1;
